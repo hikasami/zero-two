@@ -4,26 +4,28 @@ import os
 import sys
 
 
-
-developer_id = 702187267988652032
-
 class Restart(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
+        self.developer_ids = {
+            702187267988652032: True,  # Developer ID 1
+            920409051408531466: True,  # Developer ID 2
+            1139274531580694580: True, # Developer ID 3
+            502386908245000192: True,  # Developer ID 4
+            # Add more developer IDs as needed
+        }
 
-    @commands.slash_command(name='restart', description='For developers | Выполняет полную перезагрузку бота')
+    @commands.slash_command(name='restart', description='Выполняет полную перезагрузку бота')
     async def restart(self, inter):
-        if inter.author.id != developer_id:
-            await inter.response.send_message("Вы не являетесь разработчиком бота и не можете использовать эту команду.", ephemeral=True)
+        if inter.author.id not in self.developer_ids:
+            await inter.response.send_message("<:icons_Wrong:1223137173797343243> Вы не являетесь разработчиком бота и не можете использовать эту команду.", ephemeral=True)
             return
 
         embed = disnake.Embed(
-            description="Команда перезагрузки была успешно выполнена, ожидайте включения!",
-            color=0xCD853F
+            description="<:icons_Correct:1223137153140392018> Команда перезагрузки была успешно выполнена, ожидайте включения!",
+            color=0x2f3136
 
         )
-        embed.set_footer(text='Polina bot | © 2024 Все права защищены', icon_url=self.client.user.avatar)
-
         await inter.response.send_message(embed=embed, ephemeral=True)
         restart()
 

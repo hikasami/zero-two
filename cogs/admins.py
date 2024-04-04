@@ -32,15 +32,15 @@ class admins(commands.Cog):
     async def kick_user(self, ctx: disnake.ApplicationCommandInteraction, user: disnake.Member, reason: str = None):
 
         if user.top_role >= ctx.author.top_role:
-            await ctx.send("Вы не можете кикнуть пользователя с более высокой или равной ролью.")
+            await ctx.send("Вы не можете выгнать пользователя с более высокой или равной ролью.")
             return
 
         await user.kick(reason=reason)
         try:
-            await user.send(f"Вы были кикнуты с сервера {ctx.guild.name}. Причина: {reason}")
+            await user.send(f"<:icons_kick:1223137566123884606> Вы были выгнаны с сервера {ctx.guild.name}. Причина: {reason}")
         except disnake.errors.HTTPException:
             pass
-        embed = disnake.Embed(color=0xCD853F)
+        embed = disnake.Embed(color=0x2f3136)
         embed.add_field(name="Kick", value=f"{ctx.author.mention} кикнула {user.mention} из {ctx.guild} сервера 😔")
         embed.add_field(name="Причина", value=reason if reason else "Не указана")
 
@@ -54,12 +54,12 @@ class admins(commands.Cog):
             raise commands.CheckFailure
 
         if amount > 1000:
-            await ctx.send('Кискис нельзя удалить больше 1000 сообщений за раз.')
+            await ctx.send('Нельзя удалить больше 1000 сообщений за раз.')
             return
 
         deleted = await ctx.channel.purge(limit=amount)
-        embed = disnake.Embed(color=0xCD853F)
-        embed.add_field(name="Очистила чат", value=f"Удалила {len(deleted)} сообщений 😊", inline=False)
+        embed = disnake.Embed(color=0x2f3136)
+        embed.add_field(name="Очистка чата", value=f"Было удалено {len(deleted)} сообщений", inline=False)
         await ctx.send(embed=embed, ephemeral=True)
 
 
@@ -73,12 +73,12 @@ class admins(commands.Cog):
         banned_user = c.fetchone()
 
         if banned_user:
-            embed = disnake.Embed(title="Бан", description=f"{user.mention} Этот пользователь уже забанен.", color=0xCD853F)
+            embed = disnake.Embed(title="Бан", description=f"<:icons_ban:1223137191237255218> {user.mention} Этот пользователь уже забанен.", color=0x2f3136)
         else:
             await user.ban(reason=reason)
             c.execute("INSERT INTO bans (user_id, username, reason) VALUES (?, ?, ?)", (user.id, user.name, reason))
             conn.commit()
-            embed = disnake.Embed(title="Бан", description=f"{user.mention} Я забанила эту хамку.😤", color=0xCD853F)
+            embed = disnake.Embed(title="Бан", description=f"<:icons_ban:1223137191237255218> Пользователь {user.mention} успешно заблокирован.", color=0x2f3136)
             try:
                 await user.send(embed=embed)
             except disnake.errors.HTTPException:
@@ -101,7 +101,7 @@ class admins(commands.Cog):
                 c = conn.cursor()
                 c.execute("DELETE FROM bans WHERE user_id=?", (banned_user.id,))
                 conn.commit()
-                embed = disnake.Embed(title="Разбан", description=f"{banned_user.mention} был успешно разбанен.", color=0xCD853F)
+                embed = disnake.Embed(title="Разбан", description=f"{banned_user.mention} был успешно разбанен.", color=0x2f3136)
                 try:
                     await banned_user.send(embed=embed)
                 except disnake.errors.HTTPException:
@@ -112,11 +112,11 @@ class admins(commands.Cog):
 
 
 
-    @commands.slash_command(name="message_bot", description="Отправить сообщение от имени Полины.")
+    @commands.slash_command(name="message_bot", description="Отправить сообщение от имени бота.")
     @commands.has_permissions(administrator=True)
     async def echo(self, ctx: disnake.ApplicationCommandInteraction, channel: disnake.TextChannel, role: disnake.Role, *, message: str):
         message = message.replace("-", "\n")
-        embed = disnake.Embed(color=0xCD853F)
+        embed = disnake.Embed(color=0x2f3136)
         embed.add_field(name="", value=message, inline=False)
 
         role_mention = role.mention
@@ -143,14 +143,14 @@ class admins(commands.Cog):
         channel = ctx.author.voice.channel
         await channel.connect()
         embed = disnake.Embed(
-            color=0xCD853F,
+            color=0x2f3136,
             title="Готово",
             description=f"Успешно подключилась к голосовому каналу {channel.name}"
         )
         await ctx.send(embed=embed, ephemeral=True)
 
         voice_channel = ctx.author.voice.channel
-        embed = disnake.Embed(color=0xCD853F)
+        embed = disnake.Embed(color=0x2f3136)
         embed.add_field(name="voice", value=voice_channel.name, inline=False)
         await ctx.send(embed=embed, ephemeral=True)
 
@@ -163,7 +163,7 @@ class admins(commands.Cog):
     async def leave(ctx: disnake.ApplicationCommandInteraction):
         if not ctx.guild.voice_client:
             embed = disnake.Embed(
-                color=0xCD853F,
+                color=0x2f3136,
                 title="Ошибка",
                 description="Я не нахожусь в голосовом канале"
             )
@@ -172,7 +172,7 @@ class admins(commands.Cog):
 
         await ctx.guild.voice_client.disconnect()
         embed = disnake.Embed(
-            color=0xCD853F,
+            color=0x2f3136,
             title="Готово",
             description="Успешно отключилась от голосового канала"
         )
@@ -180,12 +180,12 @@ class admins(commands.Cog):
 
 
 
-    @commands.slash_command(name='stay', description='Оставаться Полине в голосовом канале')
+    @commands.slash_command(name='stay', description='Оставаться боту в голосовом канале')
     @commands.has_permissions(administrator=True)
     async def stay(ctx):
         if not ctx.author.voice:
             embed = disnake.Embed(
-                color=0xCD853F,
+                color=0x2f3136,
                 title="Ошибка",
                 description="Вы должны находиться в голосовом канале, чтобы использовать эту команду."
             )
@@ -197,14 +197,14 @@ class admins(commands.Cog):
         if voice_client and voice_client.is_connected():
             await voice_client.move_to(vc)
             embed = disnake.Embed(
-                color=0xCD853F,
+                color=0x2f3136,
                 title="Готово",
                 description=f'Я останусь в голосовом канале "{vc.name}" до тех пор, пока меня не попросят выйти. Для этого напиши /leave.'
             )
         else:
             voice_client = await vc.connect()
             embed = disnake.Embed(
-                color=0xCD853F,
+                color=0x2f3136,
                 title="Готово",
                 description="Удачно зашла в голосовой канал."
             )
@@ -220,7 +220,7 @@ class admins(commands.Cog):
         embed = disnake.Embed(
             title='Роль создана',
             description=f'Новая роль {role.mention} была создана!',
-            color=0xCD853F
+            color=0x2f3136
         )
         await ctx.send(embed=embed, ephemeral=True)
 
@@ -232,7 +232,7 @@ class admins(commands.Cog):
         embed = disnake.Embed(
             title='Роль добавлена',
             description=f'Пользователю {member.mention} была выдана роль {role.mention}!',
-            color=0xCD853F
+            color=0x2f3136
         )
         await ctx.send(embed=embed, ephemeral=True)
 
@@ -244,7 +244,7 @@ class admins(commands.Cog):
         embed = disnake.Embed(
             title='Роль удалена',
             description=f'У пользователя {member.mention} была удалена роль {role.mention}!',
-            color=0xCD853F
+            color=0x2f3136
         )
         await ctx.send(embed=embed, ephemeral=True)
 
@@ -257,7 +257,7 @@ class admins(commands.Cog):
         embed = disnake.Embed(
             title="Изменение никнейма :pen_ballpoint:",
             description=f"Никнейм участника {member.mention} был изменен на {new_nickname}.",
-            color=0xCD853F
+            color=0x2f3136
         )
         await ctx.send(embed=embed, ephemeral=True)
 
@@ -277,7 +277,7 @@ class admins(commands.Cog):
 
         await role.edit(color=color)
 
-        embed = disnake.Embed(title='Цвет изменен', color=0xCD853F)
+        embed = disnake.Embed(title='Цвет изменен', color=0x2f3136)
         embed.add_field(name='Роль', value=role.mention)
         embed.add_field(name='Цвет', value=f'#{color.value:06x}')
 
@@ -295,11 +295,11 @@ class admins(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def poll(self, ctx, *, text):
         await ctx.channel.purge(limit=1)
-        poll = disnake.Embed(description=text, colour=randint(0, 0xCD853F))
+        poll = disnake.Embed(description=text, colour=randint(0, 0x2f3136))
         poll.timestamp = datetime.utcnow()
         msg = await ctx.channel.send(embed=poll)
-        await msg.add_reaction("✔")
-        await msg.add_reaction("❌")
+        await msg.add_reaction("<:icons_Correct:1223137153140392018>")
+        await msg.add_reaction("<:icons_Wrong:1223137173797343243>")
 
 
 
@@ -314,7 +314,7 @@ class admins(commands.Cog):
 
         success_embed = disnake.Embed(title="Сообщение отправлено!",
                                       description=f"Успешно отправил участнику {member.mention}",
-                                      color=0xCD853F)
+                                      color=0x2f3136)
         await ctx.send(embed=success_embed, ephemeral=True)
 
         

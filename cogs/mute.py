@@ -17,7 +17,7 @@ class mute(commands.Cog):
                                (user_id INT PRIMARY KEY, unmute_time INT)''')
         self.conn.commit()
 
-    @commands.slash_command(name='voicemute', description='Mute пользователя в голосовых каналах')
+    @commands.slash_command(name='voicemute', description='Блокировка доступа к Голосовым каналам')
     @commands.has_permissions(manage_roles=True)
     async def tempmute(self, ctx, member: disnake.Member, duration: int, reason=None):
         mute_role = disnake.utils.get(ctx.guild.roles, name="mute")
@@ -37,12 +37,11 @@ class mute(commands.Cog):
         self.cursor.execute('INSERT OR REPLACE INTO mutes VALUES (?, ?)', (member.id, unmute_time))
         self.conn.commit()
 
-        embed = disnake.Embed(title="Мут", color=0xCD853F)
-        embed.add_field(name="Пользователь", value=member.mention, inline=True)
-        embed.add_field(name="Длительность", value=f"{duration} минут", inline=True)
-        embed.add_field(name="Причина", value=reason, inline=True)
-        embed.set_footer(text=f"Размут через: {duration} минут ⏰")
-        embed.set_footer(text="Polina bot © 2024 Все права защищены")
+        embed = disnake.Embed(title="Блокировка доступа к Голосовым каналам", color=0x2f3136)
+        embed.add_field(name="Пользователь", value=f"<:icons_text1:1223137135335575695> {member.mention}", inline=True)
+        embed.add_field(name="Длительность", value=f"<:icons_text1:1223137135335575695> {duration} минут", inline=True)
+        embed.add_field(name="Причина", value=f"<:icons_text1:1223137135335575695> {reason}", inline=True)
+        embed.set_footer(text=f"<:icons_reminder:859388128364199946> Снятие блокировки через: {duration} минут")
         
         await ctx.send(embed=embed, ephemeral=True)
 
@@ -51,7 +50,7 @@ class mute(commands.Cog):
         await asyncio.sleep(duration * 60)
         await self.unmute_member(member)
 
-    @commands.slash_command(name='unvoicemute', description='unMute пользователя в голосовых каналах')
+    @commands.slash_command(name='unvoicemute', description='Разблокировка доступа к Голосовым каналам')
     @commands.has_permissions(manage_roles=True)
     async def unmute(self, ctx, member: disnake.Member):
         mute_role = disnake.utils.get(ctx.guild.roles, name="mute")
@@ -59,16 +58,15 @@ class mute(commands.Cog):
             await member.remove_roles(mute_role)
             await self.unmute_member(member)
 
-            embed = disnake.Embed(title="Размут", color=0xCD853F)
-            embed.add_field(name="Пользователь", value=member.mention, inline=True)
-            embed.set_footer(text="Был размучен 🎉")
-            embed.set_footer(text="Polina bot © 2024 Все права защищены")
+            embed = disnake.Embed(title="Разблокировка доступа к Голосовым каналам", color=0x2f3136)
+            embed.add_field(name="Пользователь", value=f"<:icons_text1:1223137135335575695> {member.mention}", inline=True)
+            embed.set_footer(text="Была снята блокировка")
             
             await ctx.send(embed=embed, ephemeral=True)
 
             await self.send_unmute_dm(member)
         else:
-            await ctx.send(f"{member.mention} не был mute.")
+            await ctx.send(f"У пользователя: {member.mention}, не было блокировки.")
 
         self.cursor.execute('DELETE FROM mutes WHERE user_id = ?', (member.id,))
         self.conn.commit()
@@ -97,28 +95,24 @@ class mute(commands.Cog):
     async def send_mute_dm(self, member, guild_name, reason, duration, admin):
         try:
             dm_channel = await member.create_dm()
-            embed = disnake.Embed(title="Вы получили Mute", color=0xCD853F)
-            embed.add_field(name="Сервер", value=guild_name, inline=True)
-            embed.add_field(name="Причина", value=reason, inline=True)
+            embed = disnake.Embed(title="Вам был заблокирован доступ к голосовым каналам", color=0x2f3136)
+            embed.add_field(name="Сервер", value=f"<:icons_text1:1223137135335575695> {guild_name}", inline=True)
+            embed.add_field(name="Причина", value=f"<:icons_text1:1223137135335575695> {reason}", inline=True)
             unmute_datetime = datetime.datetime.now() + datetime.timedelta(minutes=duration)
-            embed.add_field(name="Дата и время размута", value=unmute_datetime.strftime("%Y-%m-%d %H:%M:%S"), inline=False)
-            embed.add_field(name="Администратор", value=admin.name, inline=True)
-            embed.set_footer(text="Вы будете размучены автоматически. 🕒")
-            embed.set_footer(text="Polina bot © 2024 Все права защищены")
+            embed.add_field(name="Дата и время снятие блокировки", value=f"<:icons_text1:1223137135335575695> {unmute_datetime.strftime('%Y-%m-%d %H:%M:%S')}", inline=False)
+            embed.add_field(name="Администратор", value=f"<:icons_text1:1223137135335575695> {admin.name}", inline=True)
             await dm_channel.send(embed=embed)
         except Exception as e:
-            print(f"Ошибка при отправке сообщения размута пользователю {member}: {e}")
+            print(f"Ошибка при отправке сообщения о блокировке пользователю {member}: {e}")
 
     async def send_unmute_dm(self, member):
         try:
             dm_channel = await member.create_dm()
-            embed = disnake.Embed(title="Вы размучены 🎉", color=0xCD853F)
-            embed.add_field(name="Сервер", value=member.guild.name, inline=True)
-            embed.set_footer(text="Вы размучены 🎉")
-            embed.set_footer(text="Polina bot © 2024 Все права защищены")
+            embed = disnake.Embed(title="У вас теперь больше нет блокировки", color=0x2f3136)
+            embed.add_field(name="Сервер", value=f"<:icons_text1:1223137135335575695> {member.guild.name}", inline=True)
             await dm_channel.send(embed=embed)
         except Exception as e:
-            print(f"Ошибка при отправке сообщения размута пользователю {member}: {e}")
+            print(f"Ошибка при отправке сообщения о снятие блокирвки пользователю {member}: {e}")
 
     @commands.Cog.listener()
     async def on_ready(self):

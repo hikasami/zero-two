@@ -54,7 +54,7 @@ class AntiSpam(commands.Cog):
                     warn_embed = disnake.Embed(
                         title="⚠️ Предупреждение за спам",
                         description=f"{message.author.mention}, ваши сообщения удаляются из-за подозрения в спаме.",
-                        color=0xCD853F
+                        color=0x2f3136
                     )
                     await message.author.send(embed=warn_embed)
                 except disnake.NotFound:

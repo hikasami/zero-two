@@ -26,7 +26,7 @@ class AutoRole(commands.Cog):
             role = guild.get_role(role_id)
             try:
                 await member.add_roles(role)
-                emb = disnake.Embed(title=f"Привет {member.display_name}!", color=0xCD853F)
+                emb = disnake.Embed(title=f"Привет {member.display_name}!", color=0x2f3136)
                 emb.description = f"Я назначила тебе роль **{role.name}** на сервере {guild.name}."
                 await member.send(embed=emb)
             except disnake.errors.Forbidden:
@@ -43,13 +43,13 @@ class AutoRole(commands.Cog):
 
             embed = disnake.Embed(
                 title=f"Роль {role.name} установлена как роль по умолчанию.",
-                color=0xCD853F
+                color=0x2f3136
             )
         else:
             embed = disnake.Embed(
                 title="Ошибка при установке роли по умолчанию!",
                 description="Укажите корректную роль",
-                color=0xCD853F
+                color=0x2f3136
             )
         await ctx.send(embed=embed, ephemeral=True)
 
@@ -59,7 +59,7 @@ class AutoRole(commands.Cog):
             embed = disnake.Embed(
                 title="Ошибка при установке роли по умолчанию!",
                 description="У вас нет разрешения управлять ролями!",
-                color=0xCD853F
+                color=0x2f3136
             )
             await ctx.send(embed=embed, ephemeral=True)
 

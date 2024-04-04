@@ -12,7 +12,7 @@ class events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        await self.bot.change_presence(status=disnake.Status.idle, activity=disnake.Activity(type=disnake.ActivityType.listening, name="Yandex Music"))
+        await self.bot.change_presence(status=disnake.Status.online, activity=disnake.Activity(type=disnake.ActivityType.competing, name="/help"))
 
 
 
@@ -29,7 +29,7 @@ class events(commands.Cog):
                 embed = disnake.Embed(
                     title="",
                     description=f"{message.author.mention}, Я удалила ваше сообщение, так как оно нарушает правила сервера!  ❌",
-                    color=0xCD853F  
+                    color=0x2f3136  
                 )
                 await message.channel.send(embed=embed)
                 break
@@ -41,8 +41,8 @@ class events(commands.Cog):
         if isinstance(error, commands.errors.CommandError):
             embed = disnake.Embed(
             title="Error",
-            color=0xCD853F,
-            description=f"Команда не смогла отправить ответ\n```js\n- Error Description: {str('{')}\n{error}\n{str('}')}\n```\nЕсли вы хотите помочь в разработке бота, то вы можете отправить эту ошибку нам на [support server](https://discord.gg/EepTPBS8) в [bugs-report](https://discord.gg/wUT3czzU) канал, после чего мы это исправим.")
+            color=0x2f3136,
+            description=f"Команда не смогла отправить ответ\n```js\n- Error Description: {str('{')}\n{error}\n{str('}')}\n```\n")
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
@@ -50,7 +50,7 @@ class events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        emb = disnake.Embed(title="Привет! добро пожаловать на сервер...", color=0xCD853F)
+        emb = disnake.Embed(title="Привет! добро пожаловать на сервер...", color=0x2f3136)
         emb.add_field(name="Мои команды", value="Чтобы узнать подробнее команды напиши - /help")
         
         await member.send(embed=emb)
